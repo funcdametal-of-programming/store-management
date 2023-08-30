@@ -6,6 +6,10 @@
 #include<iomanip>
 
 using namespace std;
+struct Customer{
+char C_name[30];
+int p_number;
+};
 class Item{
 private:
     char name[30];
@@ -13,6 +17,7 @@ private:
     string measurement;
     double bought_price;
     double selling_price;
+    Customer cust_data;
 public:
     void main_page();
     void addItem();
@@ -22,6 +27,7 @@ public:
     void buyItem();
     void decQuantity(char M_Name[30],double qua);
     void customerList();
+    void soldItem(char Sname,int Squa,double SBprice,double SSprice,double Profit);
 };
 void Item::main_page(){
 cout<<"\t\t\t Welcome to the shopping center \n";
@@ -81,29 +87,44 @@ cout<<"password\t";cin>>password;
 void Item::customerList(){
     // list customers
 fstream file("customerList.txt",ios::in);
-string c_name;
-int p_num;
 if(file.is_open()){
 cout<<"customer Name Phone Number\n";
-file>>c_name>>p_num;
+file>>cust_data.C_name>>cust_data.p_number;
  while(!file.eof()){
-cout<<c_name<<"\t\t"<<p_num<<endl;
-file>>c_name>>p_num;
+cout<<cust_data.C_name<<"\t\t"<<cust_data.p_number<<endl;
+file>>cust_data.C_name>>cust_data.p_number;
  }
  file.close();
 }
 }
 void Item::addItem(){
 system("cls");
-fstream file("storeData.txt",ios::app);
+naming:
+char addName[30];
+bool new_name=true;
+fstream file("storeData.txt",ios::app|ios::in);
 if(file.is_open()){
-cout<<"Name\t";cin>>name;
+cout<<"Name\t";cin>>addName;
+file>>name>>measurement>>quantity>>bought_price>>selling_price;
+while(!file.eof()){
+    if(strcmpi(addName,name)==0){
+        new_name=false;
+    }
+file>>name>>measurement>>quantity>>bought_price>>selling_price;
+}
+file.close();
+}
+file.open("storeData.txt",ios::app);
+if(file.is_open() && new_name==true){
+        strcpy(name,addName);
 cout<<"Measurement\t";cin>>measurement;
 cout<<"Quantity\t";cin>>quantity;
 cout<<"Bought price\t";cin>>bought_price;
 cout<<"selling price\t";cin>>selling_price;
 file<<name<<" "<<measurement<<" "<<quantity<<" "<<bought_price<<" "<<selling_price<<"\n";
 file.close();
+}else{
+cout<<"Item with this name exist. Assign other name \n";goto naming;
 }
 }
 void Item::updateItem(){
@@ -147,7 +168,7 @@ if(!file) {
 }
 void Item::displayItem(){
    // system("cls");
-fstream file("storeData.txt",ios::in);
+fstream file("storeData.txt",ios::app|ios::in);
 if(file.is_open()){
 
 cout<<"Item name   Measurement   Quantity       bought price       selling price\n";
@@ -197,21 +218,31 @@ if(!file) {
 }
 }
 void Item::buyItem(){
+     {
+    fstream customer("customerList.txt",ios::in);
+            char cust_name[30];
+            int cust_phone;
+            bool new_cus=true;
+      cout<<"customer userName:  ";cin>>cust_data.C_name;
+      cout<<"customer phone Number:  ";cin>>cust_data.p_number;
+      if(customer.is_open()){
+      customer>>cust_name>>cust_phone;
+            while(!customer.eof()){
+                    if(strcmpi(cust_name,cust_data.C_name)==0&& cust_phone==cust_data.p_number) new_cus=false;
+            customer>>cust_name>>cust_phone;
+            }
+            customer.close();
+      }
+      customer.open("customerList.txt",ios::app);
+            if(customer.is_open()&&new_cus==true){
+                    customer<<cust_data.C_name<<" "<<cust_data.p_number<<"\n";
+                        customer.close();
+            }
+      }
     // 2D vector for receipt purpose
     vector<vector<string>> bought;
     string S_qua,S_price,S_cost;
     double totalCost=0;
-    string userName;
-     {
-    fstream customer("customerList.txt",ios::app);
-    int phoneNumber;
-      cout<<"customer userName:  ";cin>>userName;
-      cout<<"customer phone Number:  ";cin>>phoneNumber;
-      if(customer.is_open()){
-        customer<<userName<<" "<<phoneNumber<<"\n";
-        customer.close();
-      }
-    }
 sell:
 system("cls");
 if(totalCost>0){
@@ -223,7 +254,9 @@ fstream store("storeData.txt",ios::in);
     cout<<" Item name   Measurement   Available Quantity        selling price\n";
     store>>name>>measurement>>quantity>>bought_price>>selling_price;
      while(!store.eof()){
-         cout<<name<<"\t\t"<<measurement<<"\t\t"<<quantity<<"\t\t"<<selling_price<<"\n";
+            if(quantity>0){
+                cout<<name<<"\t\t"<<measurement<<"\t\t"<<quantity<<"\t\t"<<selling_price<<"\n";
+            }
           store>>name>>measurement>>quantity>>bought_price>>selling_price;
      }
      store.close();
@@ -243,13 +276,17 @@ if(Data.is_open()){
          updateStore<<name<<" "<<measurement<<" "<<quantity<<" "<<bought_price<<" "<<selling_price<<"\n";
     }else{
         available=true;
-        cout<<"your preference is "<<name<<" and its cost is "<<selling_price<<endl;
+        if(quantity==0){
+                cout<<"item is not available now\n";
+        }else{
+         cout<<"your preference is "<<name<<" and its cost is "<<selling_price<<endl;
          Qua:
         double CusQuantity;
         cout<<"How many of "<<name<<" do you need? ";cin>>CusQuantity;
         if(CusQuantity<=quantity){
             //add bought item to the vector
-                 vector<string>row;
+            if(CusQuantity!=0){
+                vector<string>row;
                 double cost=CusQuantity*selling_price;
            totalCost+=cost;
            cout<<"cost is "<<cost<<endl;
@@ -266,10 +303,13 @@ if(Data.is_open()){
            row.push_back(ss_cost);
            bought.push_back(row);
             quantity=quantity-CusQuantity;
+            }
         }else{
         cout<<"We have no "<<CusQuantity<<" amount of "<<name<<" in the store. Please enter the amount again ";goto Qua;
         }
+
      updateStore<<name<<" "<<measurement<<" "<<quantity<<" "<<bought_price<<" "<<selling_price<<"\n";
+    }
     }
     Data>>name>>measurement>>quantity>>bought_price>>selling_price;
    }
@@ -287,17 +327,17 @@ if(Data.is_open()){
         goto sell;
         }else{
         system("cls");
-         cout<<"Thank you for visiting us "<<userName<<"\n ";
+         cout<<"Thank you for visiting us "<<cust_data.C_name<<"\n ";
           if(totalCost>0){
               //receipt print
                  cout<<"Item\t quantity\t   price\t total\n";
                     for(int i=0;i<bought.size();i++){
                     for(int j=0;j<4;j++){
-                            cout<<bought[i][j]<<"  \t   ";
+                                 cout<<bought[i][j]<<" \t   ";
                             }
-                        cout<<endl;
+                             cout<<endl;
                     }
-            cout<<"\t\t\t\t Total cost:  "<<totalCost<<endl;
+            cout<<"\n\n\n\t\t\t\t Total cost:  "<<totalCost<<endl;
         }
         }
 }
@@ -321,6 +361,11 @@ if(store.is_open()){
     remove("storeData.txt");
     rename("Data.txt","storeData.txt");
 }
+}
+
+void Item::soldItem(char Sname,int Squa,double SBprice,double SSprice,double Profit){
+fstream soldFile("soldData.txt",ios::app);
+
 }
 int main(){
     Item project;
