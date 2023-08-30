@@ -4,7 +4,7 @@
 #include<vector>
 #include<cmath>
 #include<iomanip>
-
+#include<ctime>
 using namespace std;
 struct Customer{
 char C_name[30];
@@ -27,7 +27,8 @@ public:
     void buyItem();
     void decQuantity(char M_Name[30],double qua);
     void customerList();
-    void soldItem(char Sname,int Squa,double SBprice,double SSprice,double Profit);
+    void soldItem(char Sname[30],int Squa,double SBprice,double SSprice,double Profit);
+    void DisplaySold();
 };
 void Item::main_page(){
 cout<<"\t\t\t Welcome to the shopping center \n";
@@ -48,6 +49,7 @@ cout<<"password\t";cin>>password;
         cout<<"4) Quantity add\n";
         cout<<"5) Quantity decrease\n";
         cout<<"6) Customer list\n";
+        cout<<"7) Display Sold Items\n";
         cout<<"which service you want to get: "; cin>>service;
 
         switch(service){
@@ -72,6 +74,9 @@ cout<<"password\t";cin>>password;
                 break;
             case 6:
                 customerList();
+                break;
+            case 7:
+                DisplaySold();
                 break;
             default:
                 cout<<"please select from listed services";
@@ -303,6 +308,8 @@ if(Data.is_open()){
            row.push_back(ss_cost);
            bought.push_back(row);
             quantity=quantity-CusQuantity;
+            double profit=CusQuantity*(selling_price-bought_price);
+            soldItem(name,CusQuantity,bought_price,selling_price,profit);
             }
         }else{
         cout<<"We have no "<<CusQuantity<<" amount of "<<name<<" in the store. Please enter the amount again ";goto Qua;
@@ -363,10 +370,34 @@ if(store.is_open()){
 }
 }
 
-void Item::soldItem(char Sname,int Squa,double SBprice,double SSprice,double Profit){
+void Item::soldItem(char Sname[30],int Squa,double SBprice,double SSprice,double Profit){
 fstream soldFile("soldData.txt",ios::app);
+if(soldFile.is_open()){
+     time_t current=time(0);
+     tm *dt=localtime(&current);
+    soldFile<<Sname<<" "<<Squa<<" "<<SBprice<<" "<<SSprice<<" "<<Profit<<" "<<dt->tm_mday<<"/"<<dt->tm_mon<<"/"<<1900+dt->tm_year<<"\n";
+    soldFile.close();
+}
 
 }
+void Item::DisplaySold(){
+fstream soldFile("soldData.txt",ios::in);
+double profit;
+double Total_profit=0;
+char Time[30];
+if(soldFile.is_open()){
+soldFile>>name>>quantity>>bought_price>>selling_price>>profit>>Time;
+cout<<"Name\tQuantity\tBought price\tSelling Price\tProfit\t\tTime\n";
+while(!soldFile.eof()){
+        cout<<name<<" \t"<<quantity<<" \t\t"<<bought_price<<"\t\t "<<selling_price<<"\t\t "<<profit<<"\t\t "<<Time<<endl;
+    Total_profit+=profit;
+    soldFile>>name>>quantity>>bought_price>>selling_price>>profit>>Time;
+}
+soldFile.close();
+}
+cout<<"\n\n\t\t\t\t\t\t\t\t Total profit: "<<Total_profit<<endl;
+}
+
 int main(){
     Item project;
     project.main_page();
