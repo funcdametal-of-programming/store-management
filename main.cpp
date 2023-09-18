@@ -5,7 +5,13 @@
 #include<cmath>
 #include<iomanip>
 #include<ctime>
+#include<windows.h>
 using namespace std;
+string setcolor(unsigned short color){
+    HANDLE hcon = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hcon, color);
+    return "";
+}
 struct Customer{
 char C_name[30];
 int p_number;
@@ -31,27 +37,46 @@ public:
     void DisplaySold();
 };
 void Item::main_page(){
-cout<<"\t\t\t Welcome to the shopping center \n";
-cout<<"\t\t\t 1) Owner \n";
-cout<<"\t\t\t 2) customer\n";
+    system("Color 8F");
+cout<<"\n\n\t\t\t**************************************\n";
+cout<<"\t\t\t* \t\t\t\t     *\n";
+cout<<"\t\t\t* \t\t\t\t     *\n";
+cout<<"\t\t\t*    Welcome to the shopping center  *\n";
+cout<<"\t\t\t* \t\t\t\t     *\n";
+cout<<"\t\t\t* \t\t\t\t     *\n";
+cout<<"\t\t\t**************************************\n";
+cout<<"\t\t\t* \t\t\t\t     *\n";
+cout<<"\t\t\t* \t1) Owner \t\t     *\n";
+cout<<"\t\t\t* \t2) customer\t\t     *\n";
+cout<<"\t\t\t* \t3) Members\t\t     *\n";
+cout<<"\t\t\t* \t\t\t\t     *\n";
+cout<<"\t\t\t**************************************\n";
+
 m:
 int choice;
-cout<<"Enter: ";cin>>choice;
+cout<<"\t\t\tEnter: ";cin>>choice;
 if(choice==1){
 string username,password;
-cout<<"username\t";cin>>username;
-cout<<"password\t";cin>>password;
-            if(username=="abebe"&& password=="mycompany"){
+cout<<"\t\t\t**************************************\n";
+cout<<"\t\t\tusername\t";cin>>username;
+cout<<"\t\t\tpassword\t";cin>>password;
+            if(username=="a"&& password=="a"){ system("cls");
       int service;
-        cout<<"1) Add Item\n";
-        cout<<"2) update Item\n";
-        cout<<"3) Display Item\n";
-        cout<<"4) Quantity add\n";
-        cout<<"5) Quantity decrease\n";
-        cout<<"6) Customer list\n";
-        cout<<"7) Display Sold Items\n";
-        cout<<"which service you want to get: "; cin>>service;
-
+ cout<<"\n\n\n\t\t\t1) Add Item\n";
+        cout<<"\t\t\t2) update Item\n";
+        cout<<"\t\t\t3) Display Item\n";
+        cout<<"\t\t\t4) Quantity add\n";
+        cout<<"\t\t\t5) Quantity decrease\n";
+        cout<<"\t\t\t6) Customer list\n";
+        cout<<"\t\t\t7) Display Sold Items\n";
+ s:       cout<<"\n\n\t\twhich service you want to get: ";
+        cin>>service;
+   if(cin.fail()) {
+       system("cls");
+       setcolor(10);
+        cout<<"Thank you for visiting us \n";
+        goto k;
+   }
         switch(service){
             case 1:
                 addItem();
@@ -79,7 +104,9 @@ cout<<"password\t";cin>>password;
                 DisplaySold();
                 break;
             default:
-                cout<<"please select from listed services";
+                setcolor(4);
+                cout<<"\t\tplease select from listed services\n";
+                goto s;
 }
 }else{
         cout<<"unauthorized username and password\n";
@@ -87,8 +114,26 @@ cout<<"password\t";cin>>password;
 }
 }else if (choice==2){
      buyItem();
+}else if(choice==3){
+    k:
+cout<<"\t\t\t Enkutatash Eshetu\t\tETS0533\\14\n";
+cout<<"\t\t\t Edom Mulugeta\t\t\tETS0503\\14\n";
+cout<<"\t\t\t Emnet Teshome\t\t\tETS0529\\14\n";
+cout<<"\t\t\t Ermiyas Ayele\t\t\tETS0541\\14\n";
+cout<<"\t\t\t Bethel Solomon\t\t\tETS0318\\14\n";
+cout<<"\t\t\t Ekhlas Abdulmelik\t\tETS0511\\14\n";
+}else if(cin.fail()){
+     system("cls");
+    goto k;
+}
+else{
+    system("cls");
+    cout<<"Please enter valid input\n";
+    main_page();
+
 }
 }
+
 void Item::customerList(){
     // list customers
 fstream file("customerList.txt",ios::in);
@@ -152,8 +197,6 @@ if(!file) {
             file1<<name<<" "<<measurement<<" "<<quantity<<" "<<bought_price<<" "<<selling_price<<"\n";
         }else{
         cout<<"Item found\t"<<name<<endl;
-        cout<<"Name\t";cin>>name;
-        cout<<"Measurement\t";cin>>measurement;
         cout<<"Quantity\t";cin>>quantity;
         cout<<"Bought price\t";cin>>bought_price;
         cout<<"selling price\t";cin>>selling_price;
@@ -369,7 +412,6 @@ if(store.is_open()){
     rename("Data.txt","storeData.txt");
 }
 }
-
 void Item::soldItem(char Sname[30],int Squa,double SBprice,double SSprice,double Profit){
 fstream soldFile("soldData.txt",ios::app);
 if(soldFile.is_open()){
