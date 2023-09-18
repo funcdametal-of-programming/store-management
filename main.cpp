@@ -37,7 +37,6 @@ public:
     void DisplaySold();
 };
 void Item::main_page(){
-    system("Color 8F");
 cout<<"\n\n\t\t\t**************************************\n";
 cout<<"\t\t\t* \t\t\t\t     *\n";
 cout<<"\t\t\t* \t\t\t\t     *\n";
@@ -73,7 +72,6 @@ cout<<"\t\t\tpassword\t";cin>>password;
         cin>>service;
    if(cin.fail()) {
        system("cls");
-       setcolor(10);
         cout<<"Thank you for visiting us \n";
         goto k;
    }
@@ -106,17 +104,21 @@ cout<<"\t\t\tpassword\t";cin>>password;
             default:
                 setcolor(4);
                 cout<<"\t\tplease select from listed services\n";
+                setcolor(7);
                 goto s;
 }
 }else{
-        cout<<"unauthorized username and password\n";
+        setcolor(4);
+        cout<<"unauthorized username and password\n";setcolor(7);
         goto m;
 }
 }else if (choice==2){
      buyItem();
 }else if(choice==3){
+    system("cls");
     k:
-cout<<"\t\t\t Enkutatash Eshetu\t\tETS0533\\14\n";
+        system("color 8F");
+cout<<"\n\n\n\t\t\t Enkutatash Eshetu\t\tETS0533\\14\n";
 cout<<"\t\t\t Edom Mulugeta\t\t\tETS0503\\14\n";
 cout<<"\t\t\t Emnet Teshome\t\t\tETS0529\\14\n";
 cout<<"\t\t\t Ermiyas Ayele\t\t\tETS0541\\14\n";
@@ -125,15 +127,14 @@ cout<<"\t\t\t Ekhlas Abdulmelik\t\tETS0511\\14\n";
 }else if(cin.fail()){
      system("cls");
     goto k;
-}
-else{
+}else{
     system("cls");
-    cout<<"Please enter valid input\n";
+    setcolor(4);
+    cout<<"Please enter valid input\n";setcolor(7);
     main_page();
 
 }
 }
-
 void Item::customerList(){
     // list customers
 fstream file("customerList.txt",ios::in);
