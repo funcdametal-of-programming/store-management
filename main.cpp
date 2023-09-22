@@ -430,11 +430,14 @@ if(Data.is_open()){
          cout<<"\n\n\t\t\t**********************************************\n";
           if(totalCost>0){
               //receipt print
+              vector<vector<string>>::iterator B_Item;
+              vector<string>::iterator B_item_detail;
                  cout<<"Item\t quantity\t   price\t total\n";
-                    for(int i=0;i<bought.size();i++){
-                    for(int j=0;j<4;j++){
-                            setcolor(j+1);
-                                 cout<<bought[i][j]<<" \t   ";
+                  int x=1;
+                    for(B_Item=bought.begin();B_Item!=bought.end();B_Item++){
+                    for(B_item_detail=B_Item->begin();B_item_detail!=B_Item->end();B_item_detail++){
+                            setcolor(x++);
+                                 cout<<*B_item_detail<<" \t   ";
                             }
                              cout<<endl;
                     }
